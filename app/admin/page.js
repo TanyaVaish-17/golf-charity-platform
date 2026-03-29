@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import AdminNavbar from '@/components/AdminNavbar'
+import Footer from '@/components/Footer'
 
 export default function AdminPage() {
   const router = useRouter()

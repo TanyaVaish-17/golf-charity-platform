@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import Footer from '@/components/Footer'
 
 export default function HomePage() {
   const [charities, setCharities] = useState([])
