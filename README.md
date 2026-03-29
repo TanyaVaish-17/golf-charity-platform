@@ -251,8 +251,8 @@ Deployed on **Vercel** with the following setup:
 
 ## 👩‍💻 Built By
 
-**Tanya Vaish**
+**Built with ❤️ by Tanya Vaish**
 
 ---
 
-> Built with ❤️ using Next.js, Supabase, and Stripe
+>  If you found this project useful, please give it a ⭐ on GitHub—your support helps me keep improving it!
