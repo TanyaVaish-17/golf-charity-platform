@@ -2,14 +2,18 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import Footer from '@/components/Footer'
+import AuthNavbar from '@/components/AuthNavbar'
 
 export default function HomePage() {
   const [charities, setCharities] = useState([])
+  const [authUser, setAuthUser] = useState(null)
 
   useEffect(() => {
     supabase.from('charities').select('*').eq('is_active', true).limit(3).then(({ data }) => {
       setCharities(data || [])
+    })
+    supabase.auth.getUser().then(({ data }) => {
+      setAuthUser(data.user || null)
     })
   }, [])
 
@@ -27,7 +31,6 @@ export default function HomePage() {
           overflow-x: hidden;
         }
 
-        /* ── Shared background decorations ── */
         .hp-bg-fixed {
           position: fixed; inset: 0; pointer-events: none; z-index: 0;
         }
@@ -46,9 +49,6 @@ export default function HomePage() {
           mask-image: radial-gradient(ellipse 80% 50% at 50% 10%, black 10%, transparent 70%);
         }
 
-        /* ══════════════════════════════════
-           NAVBAR  — matches dashboard exactly
-        ══════════════════════════════════ */
         .hp-nav {
           position: fixed; top: 0; left: 0; right: 0; z-index: 50;
           display: flex; align-items: center; justify-content: space-between;
@@ -123,9 +123,6 @@ export default function HomePage() {
           box-shadow: 0 7px 20px rgba(34,197,94,0.42);
         }
 
-        /* ══════════════════════════════════
-           HERO
-        ══════════════════════════════════ */
         .hp-hero {
           position: relative; z-index: 1;
           min-height: 100vh;
@@ -135,7 +132,6 @@ export default function HomePage() {
         }
         .hp-hero-inner { max-width: 820px; margin: 0 auto; }
 
-        /* Live badge */
         .hp-badge {
           display: inline-flex; align-items: center; gap: 0.55rem;
           background: rgba(34,197,94,0.08);
@@ -220,7 +216,6 @@ export default function HomePage() {
           color: #fff;
         }
 
-        /* Stats row */
         .hp-stats {
           display: flex; gap: 0; justify-content: center;
           background: rgba(255,255,255,0.025);
@@ -250,9 +245,6 @@ export default function HomePage() {
           to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* ══════════════════════════════════
-           SECTIONS — shared layout
-        ══════════════════════════════════ */
         .hp-section {
           position: relative; z-index: 1;
           padding: 6rem 1.5rem;
@@ -279,9 +271,6 @@ export default function HomePage() {
         }
         .hp-section-head { margin-bottom: 3.5rem; }
 
-        /* ══════════════════════════════════
-           HOW IT WORKS
-        ══════════════════════════════════ */
         .hp-steps {
           display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
         }
@@ -324,14 +313,6 @@ export default function HomePage() {
           line-height: 1.65; font-weight: 300;
         }
 
-        /* Connector line between steps */
-        @media (min-width: 769px) {
-          .hp-steps { position: relative; }
-        }
-
-        /* ══════════════════════════════════
-           PRIZES
-        ══════════════════════════════════ */
         .hp-prizes {
           display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
         }
@@ -356,13 +337,10 @@ export default function HomePage() {
         }
         .hp-prize:hover { transform: translateY(-3px); }
 
-        .hp-prize-icon {
-          font-size: 2.2rem; margin-bottom: 1.1rem; display: block;
-        }
+        .hp-prize-icon { font-size: 2.2rem; margin-bottom: 1.1rem; display: block; }
         .hp-prize-pct {
           font-family: 'Playfair Display', serif;
-          font-weight: 900; font-size: 3.2rem; line-height: 1;
-          margin-bottom: 0.5rem;
+          font-weight: 900; font-size: 3.2rem; line-height: 1; margin-bottom: 0.5rem;
         }
         .hp-prize-label {
           font-family: 'Syne', sans-serif; font-weight: 700;
@@ -372,13 +350,8 @@ export default function HomePage() {
           font-size: 0.75rem; color: #4ade80; font-weight: 600;
           margin-bottom: 0.75rem; font-family: 'Syne', sans-serif;
         }
-        .hp-prize-desc {
-          font-size: 0.78rem; color: rgba(255,255,255,0.22); font-weight: 300;
-        }
+        .hp-prize-desc { font-size: 0.78rem; color: rgba(255,255,255,0.22); font-weight: 300; }
 
-        /* ══════════════════════════════════
-           CHARITIES
-        ══════════════════════════════════ */
         .hp-charities {
           display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
           margin-bottom: 2.5rem;
@@ -391,10 +364,7 @@ export default function HomePage() {
           border-radius: 24px; padding: 2rem 1.75rem;
           transition: border-color 0.2s, transform 0.2s;
         }
-        .hp-charity:hover {
-          border-color: rgba(34,197,94,0.2);
-          transform: translateY(-2px);
-        }
+        .hp-charity:hover { border-color: rgba(34,197,94,0.2); transform: translateY(-2px); }
         .hp-charity-icon {
           width: 48px; height: 48px; border-radius: 14px;
           background: rgba(34,197,94,0.1);
@@ -412,8 +382,7 @@ export default function HomePage() {
         }
         .hp-charity-link {
           font-size: 0.78rem; color: #4ade80;
-          text-decoration: none; font-weight: 500;
-          transition: opacity 0.18s;
+          text-decoration: none; font-weight: 500; transition: opacity 0.18s;
         }
         .hp-charity-link:hover { opacity: 0.7; }
 
@@ -427,14 +396,8 @@ export default function HomePage() {
           border: 1px solid rgba(34,197,94,0.22);
           transition: background 0.18s, border-color 0.18s;
         }
-        .hp-outline-btn:hover {
-          background: rgba(34,197,94,0.12);
-          border-color: rgba(34,197,94,0.4);
-        }
+        .hp-outline-btn:hover { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.4); }
 
-        /* ══════════════════════════════════
-           CTA SECTION
-        ══════════════════════════════════ */
         .hp-cta-wrap {
           position: relative; z-index: 1;
           padding: 4rem 1.5rem 6rem;
@@ -462,8 +425,7 @@ export default function HomePage() {
         .hp-cta-title {
           font-family: 'Playfair Display', serif;
           font-weight: 700; font-size: clamp(1.6rem, 4vw, 2.4rem);
-          color: #fff; letter-spacing: -0.03em;
-          margin-bottom: 0.85rem;
+          color: #fff; letter-spacing: -0.03em; margin-bottom: 0.85rem;
         }
         .hp-cta-sub {
           font-size: 0.92rem; color: rgba(255,255,255,0.3);
@@ -474,9 +436,6 @@ export default function HomePage() {
           margin-top: 1rem; font-weight: 300;
         }
 
-        /* ══════════════════════════════════
-           FOOTER
-        ══════════════════════════════════ */
         .hp-footer {
           position: relative; z-index: 1;
           border-top: 1px solid rgba(255,255,255,0.05);
@@ -488,63 +447,56 @@ export default function HomePage() {
           flex-wrap: wrap; gap: 1.25rem;
         }
         .hp-footer-logo {
-          display: flex; align-items: center; gap: 0.55rem;
-          text-decoration: none;
+          display: flex; align-items: center; gap: 0.55rem; text-decoration: none;
         }
         .hp-footer-logo-icon {
           width: 32px; height: 32px; border-radius: 9px;
           background: linear-gradient(135deg, #22c55e, #15803d);
           display: flex; align-items: center; justify-content: center;
-          font-family: 'Syne', sans-serif;
-          font-weight: 800; font-size: 0.9rem; color: #000;
+          font-family: 'Syne', sans-serif; font-weight: 800;
+          font-size: 0.9rem; color: #000;
         }
         .hp-footer-logo-name {
           font-family: 'Syne', sans-serif; font-weight: 800;
           font-size: 1rem; color: #fff;
         }
         .hp-footer-logo-name span { color: #4ade80; }
-        .hp-footer-links {
-          display: flex; gap: 0.25rem; flex-wrap: wrap;
-        }
+        .hp-footer-links { display: flex; gap: 0.25rem; flex-wrap: wrap; }
         .hp-footer-link {
           padding: 0.3rem 0.7rem; border-radius: 8px;
           font-size: 0.78rem; color: rgba(255,255,255,0.3);
           text-decoration: none; transition: color 0.18s, background 0.18s;
         }
-        .hp-footer-link:hover {
-          color: rgba(255,255,255,0.7);
-          background: rgba(255,255,255,0.04);
-        }
-        .hp-footer-copy {
-          font-size: 0.75rem; color: rgba(255,255,255,0.15); font-weight: 300;
-        }
+        .hp-footer-link:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.04); }
+        .hp-footer-copy { font-size: 0.75rem; color: rgba(255,255,255,0.15); font-weight: 300; }
       `}</style>
 
       <div className="hp-root">
-        {/* Fixed background */}
         <div className="hp-bg-fixed">
           <div className="hp-bg-glow" />
           <div className="hp-bg-grid" />
         </div>
 
-        {/* ── Navbar ── */}
-        <nav className="hp-nav">
-          <Link href="/" className="hp-logo">
-            <div className="hp-logo-icon">G</div>
-            <span className="hp-logo-name">Golf<span>Gives</span></span>
-          </Link>
-
-          <div className="hp-nav-links">
-            <a href="#how" className="hp-nav-link">How it Works</a>
-            <a href="#prizes" className="hp-nav-link">Prizes</a>
-            <a href="#charities" className="hp-nav-link">Charities</a>
-          </div>
-
-          <div className="hp-nav-right">
-            <Link href="/login" className="hp-nav-login">Log in</Link>
-            <Link href="/subscribe" className="hp-nav-cta">Get Started →</Link>
-          </div>
-        </nav>
+        {/* ── Navbar — swaps based on auth ── */}
+        {authUser ? (
+          <AuthNavbar />
+        ) : (
+          <nav className="hp-nav">
+            <Link href="/" className="hp-logo">
+              <div className="hp-logo-icon">G</div>
+              <span className="hp-logo-name">Golf<span>Gives</span></span>
+            </Link>
+            <div className="hp-nav-links">
+              <a href="#how" className="hp-nav-link">How it Works</a>
+              <a href="#prizes" className="hp-nav-link">Prizes</a>
+              <a href="#charities" className="hp-nav-link">Charities</a>
+            </div>
+            <div className="hp-nav-right">
+              <Link href="/login" className="hp-nav-login">Log in</Link>
+              <Link href="/subscribe" className="hp-nav-cta">Get Started →</Link>
+            </div>
+          </nav>
+        )}
 
         {/* ── Hero ── */}
         <section className="hp-hero">
@@ -553,26 +505,22 @@ export default function HomePage() {
               <div className="hp-badge-dot" />
               <span className="hp-badge-text">Monthly draws now live</span>
             </div>
-
             <h1 className="hp-hero-title">
               Golf with a
               <span className="hp-hero-title-accent">greater purpose</span>
             </h1>
-
             <p className="hp-hero-sub">
               Track your Stableford scores, enter monthly prize draws, and support the charity closest to your heart — all in one place.
             </p>
-
             <div className="hp-hero-btns">
               <Link href="/subscribe" className="hp-btn-main">Start Playing →</Link>
               <a href="#how" className="hp-btn-ghost">How it Works</a>
             </div>
-
             <div className="hp-stats">
               {[
-                { val: '1,200+', label: 'Active Members', green: false },
+                { val: '1,200+', label: 'Active Members',  green: false },
                 { val: '£48K+',  label: 'Given to Charity', green: true },
-                { val: 'Monthly', label: 'Prize Draws', green: false },
+                { val: 'Monthly', label: 'Prize Draws',    green: false },
               ].map(({ val, label, green }) => (
                 <div className="hp-stat" key={label}>
                   <p className={`hp-stat-val${green ? ' green' : ''}`}>{val}</p>
@@ -594,8 +542,8 @@ export default function HomePage() {
             <div className="hp-steps">
               {[
                 { step: '01', icon: '🏌️', title: 'Subscribe & Play', desc: 'Choose a monthly or yearly plan. Enter your last 5 Stableford scores after every round.' },
-                { step: '02', icon: '🎰', title: 'Enter the Draw', desc: 'Your scores automatically enter you into our monthly prize draw. Match 3, 4, or all 5 numbers to win.' },
-                { step: '03', icon: '❤️', title: 'Give Back', desc: 'A portion of every subscription goes directly to your chosen charity. Golf with a greater purpose.' },
+                { step: '02', icon: '🎰', title: 'Enter the Draw',   desc: 'Your scores automatically enter you into our monthly prize draw. Match 3, 4, or all 5 numbers to win.' },
+                { step: '03', icon: '❤️', title: 'Give Back',        desc: 'A portion of every subscription goes directly to your chosen charity. Golf with a greater purpose.' },
               ].map(({ step, icon, title, desc }) => (
                 <div className="hp-step" key={step}>
                   <span className="hp-step-num">{step}</span>
@@ -618,9 +566,9 @@ export default function HomePage() {
             </div>
             <div className="hp-prizes">
               {[
-                { match: '5 Numbers', pool: '40%', label: 'Jackpot',       color: '#4ade80', desc: 'Rolls over if unclaimed', icon: '👑' },
-                { match: '4 Numbers', pool: '35%', label: 'Second Prize',  color: '#86efac', desc: 'Split among all winners', icon: '🥈' },
-                { match: '3 Numbers', pool: '25%', label: 'Third Prize',   color: '#bbf7d0', desc: 'Split among all winners', icon: '🥉' },
+                { match: '5 Numbers', pool: '40%', label: 'Jackpot',      color: '#4ade80', desc: 'Rolls over if unclaimed', icon: '👑' },
+                { match: '4 Numbers', pool: '35%', label: 'Second Prize', color: '#86efac', desc: 'Split among all winners', icon: '🥈' },
+                { match: '3 Numbers', pool: '25%', label: 'Third Prize',  color: '#bbf7d0', desc: 'Split among all winners', icon: '🥉' },
               ].map(({ match, pool, label, color, desc, icon }) => (
                 <div className="hp-prize" key={label}>
                   <span className="hp-prize-icon">{icon}</span>
@@ -642,7 +590,6 @@ export default function HomePage() {
               <h2 className="hp-section-title">Charities We Support</h2>
               <p className="hp-section-sub">Choose the cause that matters most to you</p>
             </div>
-
             {charities.length === 0 ? (
               <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.22)', textAlign: 'center', padding: '2rem 0' }}>
                 Charities coming soon.
@@ -661,7 +608,6 @@ export default function HomePage() {
                 ))}
               </div>
             )}
-
             <div className="hp-charities-cta">
               <Link href="/charities" className="hp-outline-btn">View all charities →</Link>
             </div>
@@ -680,7 +626,22 @@ export default function HomePage() {
         </div>
 
         {/* ── Footer ── */}
-        <Footer />
+        <footer className="hp-footer">
+          <div className="hp-footer-inner">
+            <Link href="/" className="hp-footer-logo">
+              <div className="hp-footer-logo-icon">G</div>
+              <span className="hp-footer-logo-name">Golf<span>Gives</span></span>
+            </Link>
+            <div className="hp-footer-links">
+              <Link href="/login"      className="hp-footer-link">Login</Link>
+              <Link href="/signup"     className="hp-footer-link">Sign Up</Link>
+              <Link href="/charities"  className="hp-footer-link">Charities</Link>
+              <Link href="/subscribe"  className="hp-footer-link">Subscribe</Link>
+            </div>
+            <p className="hp-footer-copy">© 2026 GolfGives. All rights reserved.</p>
+          </div>
+        </footer>
+
       </div>
     </>
   )
