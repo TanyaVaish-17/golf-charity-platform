@@ -21,31 +21,37 @@ export default function AdminPage() {
   useEffect(() => { loadAll() }, [])
 
   const loadAll = async () => {
-    const loadAll = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/login'); return }
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) { router.push('/login'); return }
       setUser(user)
-    
-      const { data: profile } = await supabase
+  
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('is_admin')
         .eq('id', user.id)
         .single()
-    
-      if (!profile?.is_admin) { router.push('/dashboard'); return }
-    
+  
+      if (profileError || !profile || !profile.is_admin) {
+        router.push('/dashboard')
+        return
+      }
+  
       const [usersRes, drawsRes, charitiesRes, winnersRes] = await Promise.all([
         supabase.from('profiles').select('*').order('created_at', { ascending: false }),
         supabase.from('draws').select('*').order('created_at', { ascending: false }),
         supabase.from('charities').select('*').order('created_at', { ascending: false }),
         supabase.from('winners').select('*, profiles(full_name, email), draws(draw_date)').order('created_at', { ascending: false }),
       ])
-    
+  
       setUsers(usersRes.data || [])
       setDraws(drawsRes.data || [])
       setCharities(charitiesRes.data || [])
       setWinners(winnersRes.data || [])
       setLoading(false)
+    } catch (err) {
+      console.error(err)
+      router.push('/dashboard')
     }
   }
 
