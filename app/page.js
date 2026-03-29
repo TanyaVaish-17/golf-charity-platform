@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import AuthNavbar from '@/components/AuthNavbar'
+import Footer from '@/components/Footer'
 
 export default function HomePage() {
   const [charities, setCharities] = useState([])
@@ -626,22 +627,7 @@ export default function HomePage() {
         </div>
 
         {/* ── Footer ── */}
-        <footer className="hp-footer">
-          <div className="hp-footer-inner">
-            <Link href="/" className="hp-footer-logo">
-              <div className="hp-footer-logo-icon">G</div>
-              <span className="hp-footer-logo-name">Golf<span>Gives</span></span>
-            </Link>
-            <div className="hp-footer-links">
-              <Link href="/login"      className="hp-footer-link">Login</Link>
-              <Link href="/signup"     className="hp-footer-link">Sign Up</Link>
-              <Link href="/charities"  className="hp-footer-link">Charities</Link>
-              <Link href="/subscribe"  className="hp-footer-link">Subscribe</Link>
-            </div>
-            <p className="hp-footer-copy">© 2026 GolfGives. All rights reserved.</p>
-          </div>
-        </footer>
-
+        <Footer/>
       </div>
     </>
   )
