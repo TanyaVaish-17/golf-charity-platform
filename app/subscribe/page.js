@@ -3,17 +3,22 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import AuthNavbar from '@/components/AuthNavbar'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
 export default function SubscribePage() {
   const router = useRouter()
   const [user, setUser] = useState(null)
+  const [authUser, setAuthUser] = useState(null)
   const [loading, setLoading] = useState(null)
   const [billingCycle, setBillingCycle] = useState('yearly')
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+      setAuthUser(data.user || null)
+    })
   }, [])
 
   const handleSubscribe = async (priceId, planName) => {
@@ -130,7 +135,6 @@ export default function SubscribePage() {
           font-weight: 300; max-width: 400px;
           margin: 0 auto; line-height: 1.65;
         }
-        /* Toggle */
         .toggle-wrap {
           display: flex; justify-content: center;
           margin-bottom: 2.1rem;
@@ -159,14 +163,12 @@ export default function SubscribePage() {
           background: rgba(0,0,0,0.18); color: inherit;
         }
         .toggle-btn:not(.active) .toggle-badge { background: rgba(34,197,94,0.15); color: #4ade80; }
-        /* Grid */
         .sub-grid {
           display: grid; grid-template-columns: 1fr 1.1fr;
           gap: 1.25rem; margin-bottom: 1.5rem; align-items: start;
           animation: fadeUp 0.5s 0.13s cubic-bezier(0.16,1,0.3,1) both;
         }
         @media (max-width: 660px) { .sub-grid { grid-template-columns: 1fr; } }
-        /* Plan card */
         .plan-card {
           background: rgba(255,255,255,0.03);
           border: 1.5px solid rgba(34,197,94,0.22); border-radius: 26px; overflow: hidden;
@@ -246,7 +248,6 @@ export default function SubscribePage() {
           text-align: center; font-size: 0.7rem;
           color: rgba(255,255,255,0.18); margin-top: 0.7rem; letter-spacing: 0.02em;
         }
-        /* Highlights */
         .highlights-card {
           background: rgba(255,255,255,0.025);
           border: 1px solid rgba(255,255,255,0.07); border-radius: 26px; padding: 2rem;
@@ -278,7 +279,6 @@ export default function SubscribePage() {
           font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.7rem; color: #4ade80;
         }
         .hl-step-text { font-size: 0.83rem; color: rgba(255,255,255,0.5); line-height: 1.5; padding-top: 0.1rem; }
-        /* Prize */
         .prize-section { animation: fadeUp 0.5s 0.2s cubic-bezier(0.16,1,0.3,1) both; }
         .prize-label {
           text-align: center; font-family: 'Syne', sans-serif; font-weight: 700;
@@ -306,8 +306,7 @@ export default function SubscribePage() {
         <div className="sub-orb-l" />
         <div className="sub-orb-r" />
 
-        {/* ── Shared Navbar ── */}
-        <Navbar />
+        {authUser ? <AuthNavbar /> : <Navbar />}
 
         <main className="sub-main">
           <div className="sub-body">
@@ -414,7 +413,6 @@ export default function SubscribePage() {
           </div>
         </main>
 
-        {/* ── Shared Footer ── */}
         <Footer />
       </div>
     </>

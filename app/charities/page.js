@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import AuthNavbar from '@/components/AuthNavbar'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
@@ -9,11 +10,15 @@ export default function CharitiesPage() {
   const [charities, setCharities] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
+  const [authUser, setAuthUser] = useState(null)
 
   useEffect(() => {
     supabase.from('charities').select('*').eq('is_active', true).then(({ data }) => {
       setCharities(data || [])
       setLoading(false)
+    })
+    supabase.auth.getUser().then(({ data }) => {
+      setAuthUser(data.user || null)
     })
   }, [])
 
@@ -226,12 +231,10 @@ export default function CharitiesPage() {
         <div className="ch-bg-top" />
         <div className="ch-bg-grid" />
 
-        {/* ── Shared Navbar ── */}
-        <Navbar />
+        {authUser ? <AuthNavbar /> : <Navbar />}
 
         <main className="ch-main">
           <div className="ch-body">
-            {/* Header */}
             <div className="ch-header">
               <h1 className="ch-header-title">Our Charities</h1>
               <p className="ch-header-sub">Every subscription contributes to causes that matter</p>
@@ -247,7 +250,6 @@ export default function CharitiesPage() {
               </div>
             </div>
 
-            {/* Count row */}
             {!loading && (
               <div className="ch-count">
                 <span className="ch-count-text">
@@ -259,7 +261,6 @@ export default function CharitiesPage() {
               </div>
             )}
 
-            {/* Grid */}
             {loading ? (
               <div className="ch-loading">
                 <div className="ch-spinner" />
@@ -285,7 +286,6 @@ export default function CharitiesPage() {
               </div>
             )}
 
-            {/* Bottom CTA */}
             <div className="ch-cta">
               <div className="ch-cta-box">
                 <p className="ch-cta-text">Want to support one of these charities?</p>
@@ -295,7 +295,6 @@ export default function CharitiesPage() {
           </div>
         </main>
 
-        {/* ── Shared Footer ── */}
         <Footer />
       </div>
     </>

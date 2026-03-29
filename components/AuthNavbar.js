@@ -11,6 +11,7 @@ export default function AuthNavbar() {
   const [profile, setProfile] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [isActive, setIsActive] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 18)
@@ -23,12 +24,13 @@ export default function AuthNavbar() {
       if (!data.user) return
       supabase
         .from('profiles')
-        .select('full_name, subscription_status')
+        .select('full_name, subscription_status, is_admin')
         .eq('id', data.user.id)
         .single()
         .then(({ data: p }) => {
           setProfile(p)
           setIsActive(p?.subscription_status === 'active')
+          setIsAdmin(p?.is_admin || false)
         })
     })
   }, [])
@@ -42,9 +44,10 @@ export default function AuthNavbar() {
   const initial = firstName[0]?.toUpperCase() || 'G'
 
   const links = [
-    { href: '/',           label: 'Home' },
-    { href: '/charities',  label: 'Charities' },
-    { href: '/dashboard',  label: 'Dashboard' },
+    { href: '/',          label: 'Home' },
+    { href: '/charities', label: 'Charities' },
+    { href: '/dashboard', label: 'Dashboard' },
+    ...(isAdmin ? [{ href: '/admin', label: '⚙️ Admin' }] : []),
   ]
 
   return (
@@ -64,7 +67,6 @@ export default function AuthNavbar() {
           box-shadow: 0 4px 32px rgba(0,0,0,0.4);
         }
 
-        /* Logo */
         .nav-auth-logo {
           display: inline-flex; align-items: center;
           gap: 0.6rem; text-decoration: none; flex-shrink: 0;
@@ -83,7 +85,6 @@ export default function AuthNavbar() {
         }
         .nav-auth-logo-name span { color: #4ade80; }
 
-        /* Centre links */
         .nav-auth-links {
           display: flex; align-items: center; gap: 0.25rem;
           position: absolute; left: 50%; transform: translateX(-50%);
@@ -111,8 +112,22 @@ export default function AuthNavbar() {
           width: 18px; height: 2px; border-radius: 99px;
           background: #4ade80;
         }
+        .nav-auth-link.admin-link {
+          color: rgba(34,197,94,0.7);
+          background: rgba(34,197,94,0.06);
+          border: 1px solid rgba(34,197,94,0.15);
+        }
+        .nav-auth-link.admin-link:hover {
+          color: #4ade80;
+          background: rgba(34,197,94,0.12);
+          border-color: rgba(34,197,94,0.3);
+        }
+        .nav-auth-link.admin-link.active {
+          color: #4ade80;
+          background: rgba(34,197,94,0.15);
+          border-color: rgba(34,197,94,0.35);
+        }
 
-        /* Right */
         .nav-auth-right {
           display: flex; align-items: center; gap: 0.65rem;
         }
@@ -161,7 +176,6 @@ export default function AuthNavbar() {
           color: #f87171;
         }
 
-        /* Mobile */
         .nav-auth-burger {
           display: none; flex-direction: column;
           gap: 5px; cursor: pointer; padding: 4px;
@@ -201,6 +215,14 @@ export default function AuthNavbar() {
         .nav-auth-drawer-link:hover, .nav-auth-drawer-link.active {
           background: rgba(34,197,94,0.07); color: #4ade80;
         }
+        .nav-auth-drawer-link.admin-drawer-link {
+          color: rgba(34,197,94,0.6);
+          background: rgba(34,197,94,0.04);
+          border: 1px solid rgba(34,197,94,0.12);
+        }
+        .nav-auth-drawer-link.admin-drawer-link:hover {
+          background: rgba(34,197,94,0.1); color: #4ade80;
+        }
         .nav-auth-drawer-divider {
           height: 1px; background: rgba(255,255,255,0.05); margin: 0.6rem 0;
         }
@@ -235,7 +257,7 @@ export default function AuthNavbar() {
             <Link
               key={href}
               href={href}
-              className={`nav-auth-link${pathname === href ? ' active' : ''}`}
+              className={`nav-auth-link${pathname === href ? ' active' : ''}${href === '/admin' ? ' admin-link' : ''}`}
             >
               {label}
             </Link>
@@ -270,7 +292,7 @@ export default function AuthNavbar() {
           <Link
             key={href}
             href={href}
-            className={`nav-auth-drawer-link${pathname === href ? ' active' : ''}`}
+            className={`nav-auth-drawer-link${pathname === href ? ' active' : ''}${href === '/admin' ? ' admin-drawer-link' : ''}`}
             onClick={() => setMenuOpen(false)}
           >
             {label}
