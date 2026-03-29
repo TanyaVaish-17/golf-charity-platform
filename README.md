@@ -249,9 +249,9 @@ Deployed on **Vercel** with the following setup:
 
 ---
 
-## 👩‍💻 Built By
+## 👩‍💻 Built By ❤️
 
-**Built with ❤️ by Tanya Vaish**
+**Tanya Vaish**
 
 ---
 
