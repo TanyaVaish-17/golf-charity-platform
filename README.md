@@ -30,8 +30,6 @@
 
 ## 🧠 Project Overview
 
-**GolfGives** is a full-stack web application built as part of the Digital Heroes Full-Stack Development Trainee Selection Process.
-
 The platform allows golfers to:
 - Subscribe monthly or yearly
 - Track their last 5 Stableford scores (rolling window)
